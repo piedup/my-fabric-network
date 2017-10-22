@@ -1,0 +1,61 @@
+{
+    "Channel": {
+        "Values": {
+            "Consortium": {
+                "Version": "0",
+                "ModPolicy": "",
+                "Value": {
+                    "name": "SampleConsortium"
+                }
+            }
+        },
+        "Policies": {},
+        "Groups": {
+            "Application": {
+                "Values": {},
+                "Policies": {
+                    "Admins": {
+                        "Version": "0",
+                        "ModPolicy": "Admins",
+                        "Policy": {
+                            "PolicyType": "3",
+                            "Policy": {
+                                "subPolicy": "Admins",
+                                "rule": "MAJORITY"
+                            }
+                        }
+                    },
+                    "Writers": {
+                        "Version": "0",
+                        "ModPolicy": "Admins",
+                        "Policy": {
+                            "PolicyType": "3",
+                            "Policy": {
+                                "subPolicy": "Writers",
+                                "rule": "ANY"
+                            }
+                        }
+                    },
+                    "Readers": {
+                        "Version": "0",
+                        "ModPolicy": "Admins",
+                        "Policy": {
+                            "PolicyType": "3",
+                            "Policy": {
+                                "subPolicy": "Readers",
+                                "rule": "ANY"
+                            }
+                        }
+                    }
+                },
+                "Groups": {
+                    "Org1MSP": {
+                        "Values": {},
+                        "Policies": {},
+                        "Groups": {}
+                    }
+                }
+            }
+        }
+    }
+}
