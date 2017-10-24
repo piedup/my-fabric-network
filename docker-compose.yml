@@ -19,7 +19,7 @@ services:
       # genesis.block contains the root certificate of each Org needed to bootstrap the orderer
       # configtxgen -inspectBlock channel-config/genesis.block -profile OneOrgOrdererGenesis
       - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/network-artifacts/genesis.block
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/config/genesis.block
 
       # enable TLS
       - ORDERER_GENERAL_TLS_ENABLED=true
@@ -31,7 +31,7 @@ services:
     ports:
       - 7050:7050
     volumes:
-      - ./network-artifacts:/etc/hyperledger/network-artifacts
+      - ./config:/etc/hyperledger/config
       - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls:/etc/hyperledger/fabric/tls
       - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/etc/hyperledger/fabric/msp
     networks:
@@ -54,14 +54,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
-      
     volumes:
       - /var/run/:/host/var/run/
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/etc/hyperledger/fabric/tls
       - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/fabric/msp
-      - ./crypto-config/peerOrganizations/org1.example.com/users:/etc/hyperledger/fabric/users
-      - ./crypto-config/ordererOrganizations/example.com/tlsca/:/etc/hyperledger/fabric/tlsca/
-      - ./network-artifacts:/etc/hyperledger/fabric/config
     ports:
       - 7051:7051
       - 7053:7053
@@ -79,9 +75,9 @@ services:
       - COUCHDB_PASSWORD=
     ports:
       - 5984:5984
+    # uncomment to persist CouchDB data
     # volumes:
-      # uncomment to persist CouchDB data
-      # - /var/hyperledger/couchdb0:/opt/couchdb/data
+    #   - /var/hyperledger/couchdb0:/opt/couchdb/data
     networks:
       - stratumn
   
@@ -91,27 +87,32 @@ services:
     tty: true
     environment:
       - GOPATH=/opt/gopath
-      - CORE_VM_ENDPOINT=unix:///hot/var/run/docker.sock
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_LOGGING_LEVEL=debug
       - CORE_PEER_ID=cli
 
       # required to create and join channel
-      - CORE_PEER_MSP_CONFIGPATH=/opt/gopath/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+      - CHANNEL_NAME=mychannel
+      - CONFIG_PATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/config
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
       - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
-      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/github.com/hyperledger/fabric/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.cert
+      - ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
       # enable TLS
       - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash
+    command: /bin/bash "scripts/install.sh"
     volumes:
-      - /var/run/:/host/ver/run/
+      - /var/run/:/host/var/run/
+      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts
       - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto
-      - ./network-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/network-artifacts
-      - $GOPATH/src/github.com/stratumn/sdk/fabricstore/chaincode/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode
+      - ./config:/opt/gopath/src/github.com/hyperledger/fabric/peer/config
+      - $GOPATH/src/github.com/stratumn/sdk/fabricstore/chaincode/:/opt/gopath/src/github.com/
+      - $GOPATH/src/github.com/stratumn/sdk:/opt/gopath/src/github.com/stratumn/sdk
     depends_on:
       - orderer.example.com
       - peer0.org1.example.com

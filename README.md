@@ -23,18 +23,14 @@ Define Org1 anchor peer for channel
 
 `configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./network-artifacts/Org1MSPanchors.tx -channelID=$CHANNEL_NAME -asOrg Org1MSP`
 
-Start the network (add-d to run in the background)
+Start the network
 
-`docker-compose -f docker-compose.yml up`
+`docker-compose -f docker-compose.yml up -d; docker logs -f cli`
 
 Stop running containers
 
 `docker rm -f $(docker ps -aq)`
 
-Boostrap the orderer
+Remove chaincode image
 
-`peer channel create -o orderer.example.com:7050 -c mychannel -f ./network-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile ./crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem`
-
-Join peer to channel
-
-Anchor peer
+`docker rmi $(docker images | grep dev-peer0.org1.example.com-pop-1.0 | awk "{print \$3}")`
