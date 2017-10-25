@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  fabricstore:
+    container_name: fabricstore
+    image: hyperledger/fabric-baseimage:x86_64-0.4.2
+    tty: true
+    environment:
+      - GO_TAGS
+      - GO_TESTFLAGS
+    command: /bin/bash '/home/scripts/store.sh'
+    volumes:
+      - $GOPATH/src/github.com/stratumn/sdk:/opt/gopath/src/github.com/stratumn/sdk
+      - ./crypto-config:/home/crypto-config
+      - ./client-config/client-config.yaml:/opt/gopath/src/github.com/hyperledger/fabric-sdk-go/pkg/config/config.yaml
+      - ./client-config/client-config.yaml:/home/client-config.yaml
+      - ./scripts/store.sh:/home/scripts/store.sh
+    ports:
+      - 5000:5000
+    networks:
+      - stratumn

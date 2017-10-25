@@ -8,7 +8,7 @@ verifyResult () {
 }
 
 # Wait for network
-sleep 10
+sleep 7
 
 echo "Creating channel..."
 peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f $CONFIG_PATH/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
@@ -33,6 +33,8 @@ peer chaincode install -n pop -v 1.0 -p github.com/pop
 res=$?
 verifyResult $res "Chaincode installation on remote peer has Failed"
 echo "===================== Chaincode is installed on remote peer ===================== "
+
+sleep 3
 
 echo "Instantiate chaincode..."
 peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n pop -v 1.0 -c '{"Args":[]}' -P "AND ('Org1MSP.member')"

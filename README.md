@@ -25,7 +25,7 @@ Define Org1 anchor peer for channel
 
 Start the network
 
-`docker-compose -f docker-compose.yml up -d; docker logs -f cli`
+`docker-compose -f docker-compose.yml -f docker-compose-store.yml up -d; docker logs -f cli`
 
 Stop running containers
 

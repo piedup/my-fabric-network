@@ -9,7 +9,7 @@ services:
     image: hyperledger/fabric-orderer
     environment:
       # logging
-      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LOGLEVEL=warn
 
       # orderer parameters
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -76,8 +76,8 @@ services:
     ports:
       - 5984:5984
     # uncomment to persist CouchDB data
-    # volumes:
-    #   - /var/hyperledger/couchdb0:/opt/couchdb/data
+    volumes:
+      - ./data:/opt/couchdb/data
     networks:
       - stratumn
   
@@ -88,7 +88,7 @@ services:
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_LOGGING_LEVEL=debug
+      - CORE_LOGGING_LEVEL=warn
       - CORE_PEER_ID=cli
 
       # required to create and join channel
