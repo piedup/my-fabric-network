@@ -1,3 +1,5 @@
+### Generate crypto material (optional) ###
+
 Generate crypto material
 
 `cryptogen generate --config=./crypto-config.yaml`
@@ -23,14 +25,12 @@ Define Org1 anchor peer for channel
 
 `configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./network-artifacts/Org1MSPanchors.tx -channelID=$CHANNEL_NAME -asOrg Org1MSP`
 
-Start the network
+### Run fabric network with indigo fabricstore ###
 
-`docker-compose -f docker-compose.yml -f docker-compose-store.yml up -d; docker logs -f cli`
+Start network and fabricstore
 
-Stop running containers
+`./start.sh`
 
-`docker rm -f $(docker ps -aq)`
+Stop network and fabricstore
 
-Remove chaincode image
-
-`docker rmi $(docker images | grep dev-peer0.org1.example.com-pop-1.0 | awk "{print \$3}")`
+`./stop.sh`
