@@ -19,4 +19,6 @@ services:
       # - CORE_PEER_GOSSIP_ORGLEADER=false
       # - CORE_PEER_PROFILE_ENABLED=true
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    logging:
+      driver: none
     command: peer node start
