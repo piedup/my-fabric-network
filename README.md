@@ -15,6 +15,7 @@ Inspect orderer genesis block
 Create a channel configuration transaction
 
 `export CHANNEL_NAME=mychannel`
+
 `configtxgen -profile OneOrgChannel -outputCreateChannelTx ./network-artifacts/channel.tx -channelID $CHANNEL_NAME`
 
 Inspect channel configuration transaction
